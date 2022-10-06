@@ -179,62 +179,116 @@ console.log(divide(2, 2)); // 1
 ### Aysnchrone/synchrone/promesses
 
 ```javascript
-const { sendMail } = require('sendmail'); // J'importe un module qui enverrait des mails
-function envoiMail(destinataire, titre, contenu) {
-    console.log('envoiMail');
-    sendMail(destinataire, titre, contenu)
+function sum(a, b) {
+    console.log(`somme de ${a} + ${b}`);
+    const retour = a + b;
+    console.log(retour);
+    return retour;
 }
 
-envoiMail("toto", "titre", "contenu");
-console.log('suite');
+sum(2, 2); // 4 et affiche 'somme de 2 + 2' puis '4'
+console.log('main');
 
 /** Dans la console vous verrez : 
-envoiMail
-suite
+somme de 2 + 2
+4
+main
 **/
 ```
-Ici le code est synchrone, il est exécuté de haut en bas et si la fonction envoiMail est bloquante ou sollicite trop le CPU, votre application sera bloquée.
+Ici le code est synchrone, il est exécuté de "haut en bas"
 
 ```javascript
-const { sendMailPromise } = require('sendmail'); // Mon module me fournit une promesse
-function envoiMail(destinataire, titre, contenu) {
-    sendMailPromise(destinataire, titre, contenu).then((resultat) => {
-        console.log("Mon mail a été envoyé");
-    }).catch((error) => {
-        console.log("Mon mail n'a pas été envoyé");
+function sumPromise(a ,b) {
+    return new Promise((resolve, reject) => {
+        resolve(a+b);
     });
 }
 
-envoiMail("toto", "titre", "contenu");
-console.log('suite');
-
-/** Dans la console vous verrez : 
-suite
-Mon mail a été envoyé ou Mon mail n'a pas été envoyé
-
-L'ordre ici n'est pas garanti, car vous appelez une fonction asynchrone et vous ne forcez pas l'attente du résultat
-**/
-```
-Ici le code est asynchrone, votre coeur d'application continue de tourner (et parfois tourne avant) que votre envoi de mail ait été finit.
-
-```javascript
-const { sendMailPromise } = require('sendmail'); // Mon module me fournit une promesse
-
-async function envoiMail(destinaire, titre, contenu) {
-    const retour = await envoiMail(destinaire, titre, contenu);
-    console.log(retour); // mon retour d'envoi de mail (vrai ou faux par exemple)
-    
-    const retour2 = envoiMail(destinaire, titre, contenu);
-    console.log(retour2); // Promise <Pending OR Resolved>
+function sum2(a, b) {
+    sumPromise(a, b).then((result) => {
+        console.log(result); // a + b
+    });
 }
 
-envoiMail("toto", "titre", "contenu")
+sum2(2, 2);
+console.log('main');
+
+/** Dans la console vous verrez : 
+main
+4
+
+Votre programme continue de s'exécuter pendant que votre tâche asynchrone s'exécute, et son retour s'affiche donc après
+**/
 ```
 
-Ici, grâce au mot clé `await` je peux garantir l'ordre d'exécution de mes appels aysnchrones et attendre leur retour.  
-Je ne peux utiliser ce mot clé que lorsque je suis dans une fonction préfixée `async`  
-Aujourd'hui on préfère utiliser `async/await` que chainer les promesses avec les then/catch.  
-Il est toujours possible de catch les erreurs d'un await, en l'entourant d'un block `try/cach`
+```javascript
+function sumPromise(a ,b) {
+    return new Promise((resolve, reject) => {
+        resolve(a+b);
+    });
+}
+
+async function sum2(a, b) {
+    const retour = await sumPromise(2, 2);
+    console.log(retour); // 4
+
+    const retour2 = sumPromise(2, 2);
+    console.log(retour2); // Promise { 4 }
+}
+
+sum2(2, 2);
+console.log('main');
+
+// La console retournera d'abord "main" puis "4" puis "Promise { 4 }"
+```
+
+- Ici, grâce au mot clé `await` je peux garantir l'ordre d'exécution de mes appels aysnchrones et attendre leur retour.  
+- Je ne peux utiliser ce mot clé que lorsque je suis dans une fonction préfixée `async`  
+- Aujourd'hui on préfère utiliser `async/await` que chainer les promesses avec les then/catch.  
+- Il est toujours possible de catch les erreurs d'un await, en l'entourant d'un block `try/cach`  
+- Une `async function` convertit toujours son retour en `Promise`
+
+```javascript
+async function sum(a, b) {
+    console.log(`somme de ${a} + ${b}`);
+    return a + b;
+}
+
+const entiers = [1, 2, 3];
+entiers.forEach(async entier => {
+    const retour = await sum(entier, entier);
+    console.log(retour);
+});
+```
+Ici, votre console, affichera d'abord toutes les 'somme de x + x', puis tous les résultats, même en utilisant `await` à cause de l'utilisation de `.forEach`
+
+Si vous voulez conserver l'ordre, vous pouvez utiliser une boucle classique :
+```javascript
+async function sum(a, b) {
+    console.log(`somme de ${a} + ${b}`);
+    return a + b;
+}
+
+async function somme(entiers) {
+    for (const index in entiers) {
+        const entier = entiers[index];
+        const retour = await sum(entier, entier);
+        console.log(retour);
+    }
+}
+
+const entiers = [1, 2, 3];
+somme(entiers);
+
+// somme de 1 + 1
+// 2
+// somme de 2 + 2
+// 4
+// somme de 3 + 3
+// 6
+```
+
+Vous pouvez aussi utiliser `Promise.all` (https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Promise/all)
 
 ## Node.JS
 
