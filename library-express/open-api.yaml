@@ -1,0 +1,164 @@
+openapi: 3.0.3
+info:
+  title: Library API
+  description: This API manage a bookstore
+  contact:
+    email: dev@bookstore.com
+  version: 1.0.0
+servers:
+  - url: "{protocol}://{server}"
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+      server:
+        default: localhost:3000
+tags:
+  - name: books
+    description: Everything about Books
+  - name: users
+    description: Everything about Users
+  - name: reviews
+    description: Everything about Reviews
+paths:
+  /books:
+    get:
+      tags:
+        - books
+      summary: Get all books
+      description: Return all books available on the bookstore
+      operationId: getAllBooks
+      responses:
+        "200":
+          description: Books fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookList"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      tags:
+        - books
+      summary: Add a new book to the store
+      operationId: addBook
+      requestBody:
+        $ref: "#/components/requestBodies/BookCreation"
+      responses:
+        "200":
+          description: Book created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "400":
+          $ref: "#/components/responses/InvalidBody"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /books/{id}:
+    get:
+      tags:
+        - books
+      summary: Get a book by its id
+      operationId: getBookById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Book fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  schemas:
+    BookList:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Book'
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "My book"
+        date:
+          type: string
+          format: date
+          example: "2022-10-25"
+  requestBodies:
+    BookCreation:
+      required: true
+      description: Book object that needs to be created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Book'
+  responses:
+    NotFound:
+      description: "The ressource specified is not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [ success, message ]
+            properties:
+              success:
+                type: boolean
+                default: false
+                example: false
+              message:
+                type: string
+                default: ""
+                example: "This ressource with this id is not found"
+    InvalidBody:
+      description: "The body sent to the request is invalid"
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [ success, message ]
+            properties:
+              success:
+                type: boolean
+                default: false
+                example: false
+              message:
+                type: string
+                default: ""
+                example: "Please make sure that all args on the body are ok"
+    InternalServerError:
+      description: "An internal server error occurred"
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [ success, message ]
+            properties:
+              success:
+                type: boolean
+                default: false
+                example: false
+              message:
+                type: string
+                default: "An unknown server error occurred"
+                example: "An unknown server error occurred"
