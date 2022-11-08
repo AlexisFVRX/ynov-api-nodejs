@@ -1,5 +1,4 @@
 const reviewsService = require('./reviews');
-const db = require('../models');
 
 const users = [
     {id: 1, firstName: "Jean", lastName: "Dupont"},
@@ -8,15 +7,9 @@ const users = [
 ];
 
 exports.getUsers = async () => {
-    return await db.users.findAll();
+    return users;
 }
 
-/**
- *
- * @param id String : l'id de l'utilisateur à chercher
- * @description Search a user by an id, which is find by integer equality
- * @returns {{firstName: string, lastName: string, id: number} | {firstName: string, lastName: string, id: number} | {firstName: string, lastName: string, id: number}}
- */
 exports.getUserById = (id) => {
     id = parseInt(id);
     return users.find(o => o.id === id);
