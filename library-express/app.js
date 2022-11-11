@@ -16,7 +16,8 @@ app.use('/books', booksRouter);
 
 app.use((error, req, res, next) => {
     res.status(error.status || 500)
-        .json({success: false, message: error.message});
+        .json({success: false, message: error.message, status: error.status});
 });
+
 
 module.exports = app;
