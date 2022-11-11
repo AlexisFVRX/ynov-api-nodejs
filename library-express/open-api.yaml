@@ -47,12 +47,8 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/BookCreation"
       responses:
-        "200":
-          description: Book created successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Book"
+        "201":
+          $ref: "#/components/responses/ResourceCreated"
         "400":
           $ref: "#/components/responses/InvalidBody"
         "500":
@@ -78,8 +74,37 @@ paths:
                 $ref: "#/components/schemas/Book"
         "404":
           $ref: "#/components/responses/NotFound"
+    delete:
+      tags:
+        - books
+      summary: Delete a book by its id
+      operationId: deleteBookById
+      parameters:
+        - $ref : '#/components/parameters/idInPath'
+      responses:
+        "200":
+          description: Book deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ success ]
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                    default: true
+        "404":
+          $ref: "#/components/responses/NotFound"
 
 components:
+  parameters:
+    idInPath:
+      required: true
+      name: id
+      in: path
+      schema:
+        type: integer
   schemas:
     BookList:
       type: object
@@ -114,8 +139,24 @@ components:
           schema:
             $ref: '#/components/schemas/Book'
   responses:
+    ResourceCreated:
+      description: "The resource has been created"
+      content:
+        application/json:
+          schema:
+            type: object
+            required : [ success, id ]
+            properties:
+              success:
+                type: boolean
+                default: true
+                example: true
+              id:
+                type: integer
+                example: 1
+                description: "The id of the ressource created"
     NotFound:
-      description: "The ressource specified is not found"
+      description: "The resource specified is not found"
       content:
         application/json:
           schema:
