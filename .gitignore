@@ -107,3 +107,4 @@ dist
 exercices
 express-routing
 gen
+library-express/*.sqlite
