@@ -23,6 +23,21 @@ tags:
   - name: reviews
     description: Everything about Reviews
 paths:
+  /login:
+    post:
+      responses:
+        "200":
+          description: "OK"
+  /axios/meteo:
+    get:
+      responses:
+        "200":
+          description: "OK"
+  /axios/books:
+    post:
+      responses:
+        "200":
+          description: "OK"
   /books:
     get:
       tags:
