@@ -1,4 +1,5 @@
 const { DataTypes } = require('sequelize');
+const bcrypt = require('bcrypt');
 
 module.exports = (instance) => {
     return instance.define('user', {
@@ -6,6 +7,14 @@ module.exports = (instance) => {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
+            allowNull: false
+        },
+        username: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        password: {
+            type: DataTypes.STRING,
             allowNull: false
         },
         firstName: {
