@@ -1,5 +1,6 @@
 const db = require('./models/index');
 const app = require('./app');
+require('dotenv').config();
 
 db.instance.sync({force: true}).then(() => {
     console.log('Database connected an synchronized');
