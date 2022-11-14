@@ -13,6 +13,10 @@ app.use(
 
 const booksRouter = require('./routers/books');
 app.use('/books', booksRouter);
+const axiosRouter = require('./routers/axios');
+app.use('/axios', axiosRouter);
+const loginRouter = require('./routers/login');
+app.use('/login', loginRouter);
 
 app.use((error, req, res, next) => {
     res.status(error.status || 500)

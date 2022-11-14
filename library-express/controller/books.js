@@ -3,6 +3,7 @@ const createError = require('http-errors');
 
 exports.getBooks = async (req, res) => {
    const books = await booksService.getBooks();
+   res.set('Cache-Control', 'max-age=30'); // Using client cache
    res.json({success: true, data: books});
 }
 
