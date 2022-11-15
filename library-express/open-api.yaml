@@ -57,6 +57,8 @@ paths:
     post:
       tags:
         - books
+      security:
+        - bearerAuth: []
       summary: Add a new book to the store
       operationId: addBook
       requestBody:
@@ -218,3 +220,9 @@ components:
                 type: string
                 default: "An unknown server error occurred"
                 example: "An unknown server error occurred"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Set your JWT token
