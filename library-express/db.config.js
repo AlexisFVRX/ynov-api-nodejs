@@ -1,11 +1,16 @@
+// Uncomment this block to use sqlite
 module.exports = {
     dialect: "sqlite",
-    storage: "./my-db.sqlite"
+    storage: "./my-db.sqlite",
 }
-// MYSQL :
+
+// Uncomment this block to use mysql
 /*module.exports = {
-    hostname: "localhost",
-    username: "root",
+    hostname: "",
+    username: "",
     password: "",
-    database: "ynov"
+    database: "",
+    port: 3306
 }*/
+
+// TODO : adapt this file to load parameters from environment variables (process.env.VARIABLE_NAME)
